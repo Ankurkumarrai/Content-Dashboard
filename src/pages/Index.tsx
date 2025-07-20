@@ -11,27 +11,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Search, 
   Settings, 
-  User, 
   Bell, 
-  Grid, 
-  List, 
-  Filter, 
   RefreshCw,
-  TrendingUp,
-  Heart,
   LogIn,
   LogOut,
   Sun,
   Moon,
+  TrendingUp,
+  Sparkles,
 } from 'lucide-react';
 import { RootState } from '@/store';
 import { 
-  setSearchQuery, 
-  setSelectedCategory, 
-  reorderContent,
   setContent,
   addContent,
-  ContentItem,
 } from '@/store/slices/contentSlice';
 import { 
   setActiveView, 
@@ -42,23 +34,21 @@ import { logout } from '@/store/slices/authSlice';
 import { ContentCard } from '@/components/content/ContentCard';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { AuthModal } from '@/components/auth/AuthModal';
-import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates';
 import { useToast } from '@/hooks/use-toast';
+import { 
+  getArticles, 
+  getFeaturedArticles, 
+  getTrendingArticles, 
+  searchArticles,
+  getUserFavorites,
+  getUserBookmarks,
+  Article 
+} from '@/lib/supabase';
 
 const Index = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { toast } = useToast();
-  const { triggerManualUpdate } = useRealTimeUpdates();
-  
-  const { 
-    filteredItems, 
-    favorites, 
-    bookmarks, 
-    searchQuery, 
-    selectedCategory, 
-    isLoading 
-  } = useSelector((state: RootState) => state.content);
   
   const { 
     activeView, 
@@ -70,71 +60,111 @@ const Index = () => {
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
+  const [favorites, setFavorites] = useState<Article[]>([]);
+  const [bookmarks, setBookmarks] = useState<Article[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [loading, setLoading] = useState(true);
 
   const categories = [
     'all', 'news', 'entertainment', 'social', 'technology', 
     'sports', 'science', 'health', 'business'
   ];
 
-  // Initialize content
+  // Load articles from Supabase
   useEffect(() => {
-    const initializeContent = async () => {
-      dispatch(setContent(generateMockContent(20)));
-    };
+    loadArticles();
+  }, []);
 
-    initializeContent();
-  }, [dispatch]);
+  // Load user favorites and bookmarks when authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      loadUserData();
+    }
+  }, [isAuthenticated, user]);
 
-  const generateMockContent = (count: number): ContentItem[] => {
-    const categories = ['news', 'entertainment', 'social', 'technology', 'sports', 'science', 'health', 'business'] as const;
-    const authors = ['Alex Johnson', 'Sarah Chen', 'Mike Rodriguez', 'Emma Thompson', 'David Kim', 'Lisa Park', 'James Wilson'];
-    
-    return Array.from({ length: count }, (_, i) => {
-      const category = categories[Math.floor(Math.random() * categories.length)];
-      return {
-        id: `item-${i + 1}`,
-        title: `${category.charAt(0).toUpperCase() + category.slice(1)} Article ${i + 1}`,
-        description: `This is a sample description for ${category} content. It provides insights and valuable information about the latest trends and developments.`,
-        category,
-        author: authors[Math.floor(Math.random() * authors.length)],
-        publishedAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-        imageUrl: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 100000000)}?w=400&h=250&fit=crop`,
-        url: `https://example.com/article/${i + 1}`,
-        isFavorite: Math.random() > 0.8,
-        isBookmarked: Math.random() > 0.7,
-        readTime: Math.floor(Math.random() * 10) + 1,
-        tags: [category, 'trending', 'featured'].slice(0, Math.floor(Math.random() * 3) + 1),
-        engagement: {
-          likes: Math.floor(Math.random() * 100),
-          shares: Math.floor(Math.random() * 50),
-          comments: Math.floor(Math.random() * 25),
-        },
-      };
-    });
+  // Filter articles based on search and category
+  useEffect(() => {
+    let filtered = articles;
+
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(article => article.category === selectedCategory);
+    }
+
+    if (searchQuery) {
+      filtered = filtered.filter(article =>
+        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+
+    setFilteredArticles(filtered);
+  }, [articles, selectedCategory, searchQuery]);
+
+  const loadArticles = async () => {
+    try {
+      setLoading(true);
+      const data = await getArticles();
+      setArticles(data);
+    } catch (error) {
+      console.error('Error loading articles:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load articles',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadUserData = async () => {
+    if (!user?.id) return;
+
+    try {
+      const [userFavorites, userBookmarks] = await Promise.all([
+        getUserFavorites(user.id),
+        getUserBookmarks(user.id),
+      ]);
+      
+      setFavorites(userFavorites);
+      setBookmarks(userBookmarks);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
   };
 
   const handleSearch = (value: string) => {
-    dispatch(setSearchQuery(value));
+    setSearchQuery(value);
   };
 
   const handleCategoryFilter = (category: string) => {
-    dispatch(setSelectedCategory(category));
+    setSelectedCategory(category);
   };
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      const newContent = generateMockContent(5);
-      dispatch(addContent(newContent));
-      setIsRefreshing(false);
-      
+    try {
+      await loadArticles();
+      if (isAuthenticated && user) {
+        await loadUserData();
+      }
       toast({
         title: t('common.success'),
-        description: 'New content loaded successfully',
+        description: 'Content refreshed successfully',
       });
-    }, 1000);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to refresh content',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const handleLogout = () => {
@@ -158,19 +188,16 @@ const Index = () => {
       case 'favorites':
         return favorites;
       case 'trending':
-        return filteredItems.filter(item => item.tags.includes('trending'));
+        return articles.filter(article => article.trending);
       default:
-        return filteredItems;
+        return filteredArticles;
     }
   };
 
   const onDragEnd = (result: any) => {
     if (!result.destination) return;
-
-    dispatch(reorderContent({
-      fromIndex: result.source.index,
-      toIndex: result.destination.index,
-    }));
+    // Drag and drop functionality can be implemented here
+    // For now, we'll keep the articles in their current order
   };
 
   return (

@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Heart, Bookmark, Share2, MessageCircle, Clock, ExternalLink } from 'lucide-react';
-import { ContentItem, toggleFavorite, toggleBookmark } from '@/store/slices/contentSlice';
+import { Article } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 
 interface ContentCardProps {
-  item: ContentItem;
+  item: Article;
   index: number;
   isDragging?: boolean;
 }
@@ -32,22 +32,22 @@ export const ContentCard: React.FC<ContentCardProps> = ({ item, index, isDraggin
   const handleFavoriteToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(toggleFavorite(item.id));
+    // TODO: Implement Supabase favorite toggle
   };
 
   const handleBookmarkToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(toggleBookmark(item.id));
+    // TODO: Implement Supabase bookmark toggle
   };
 
   const handleCardClick = () => {
-    window.open(item.url, '_blank', 'noopener,noreferrer');
+    window.open(item.external_url || '#', '_blank', 'noopener,noreferrer');
   };
 
   const formatTimeAgo = (dateString: string) => {
     const now = new Date();
-    const published = new Date(dateString);
+    const published = new Date(item.published_at);
     const diffInMinutes = Math.floor((now.getTime() - published.getTime()) / (1000 * 60));
 
     if (diffInMinutes < 60) {
@@ -72,10 +72,10 @@ export const ContentCard: React.FC<ContentCardProps> = ({ item, index, isDraggin
         className="h-full cursor-pointer transition-all duration-200 hover:shadow-lg border-border/50 bg-card/50 backdrop-blur-sm"
         onClick={handleCardClick}
       >
-        {item.imageUrl && (
+        {item.image_url && (
           <div className="relative overflow-hidden rounded-t-lg">
             <img
-              src={item.imageUrl}
+              src={item.image_url}
               alt={item.title}
               className="w-full h-48 object-cover transition-transform duration-200 group-hover:scale-105"
               loading="lazy"
@@ -95,7 +95,7 @@ export const ContentCard: React.FC<ContentCardProps> = ({ item, index, isDraggin
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Avatar className="h-6 w-6">
-                <AvatarImage src={`https://ui-avatars.com/api/?name=${encodeURIComponent(item.author)}&background=6366f1&color=fff&size=24`} />
+                <AvatarImage src={item.author_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.author)}&background=6366f1&color=fff&size=24`} />
                 <AvatarFallback className="text-xs">
                   {item.author.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>
@@ -107,25 +107,23 @@ export const ContentCard: React.FC<ContentCardProps> = ({ item, index, isDraggin
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  'h-8 w-8 p-0 transition-colors',
-                  item.isFavorite ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground hover:text-red-500'
+                  'h-8 w-8 p-0 transition-colors text-muted-foreground hover:text-red-500'
                 )}
                 onClick={handleFavoriteToggle}
-                aria-label={item.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                aria-label="Add to favorites"
               >
-                <Heart className={cn('h-4 w-4', item.isFavorite && 'fill-current')} />
+                <Heart className="h-4 w-4" />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  'h-8 w-8 p-0 transition-colors',
-                  item.isBookmarked ? 'text-blue-500 hover:text-blue-600' : 'text-muted-foreground hover:text-blue-500'
+                  'h-8 w-8 p-0 transition-colors text-muted-foreground hover:text-blue-500'
                 )}
                 onClick={handleBookmarkToggle}
-                aria-label={item.isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
+                aria-label="Add bookmark"
               >
-                <Bookmark className={cn('h-4 w-4', item.isBookmarked && 'fill-current')} />
+                <Bookmark className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -144,26 +142,26 @@ export const ContentCard: React.FC<ContentCardProps> = ({ item, index, isDraggin
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1">
                 <Heart className="h-3 w-3" />
-                <span>{item.engagement.likes}</span>
+                <span>{item.likes}</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Share2 className="h-3 w-3" />
-                <span>{item.engagement.shares}</span>
+                <span>{item.shares}</span>
               </div>
               <div className="flex items-center space-x-1">
                 <MessageCircle className="h-3 w-3" />
-                <span>{item.engagement.comments}</span>
+                <span>{item.comments}</span>
               </div>
             </div>
 
             <div className="flex items-center space-x-3">
-              {item.readTime && (
+              {item.read_time && (
                 <div className="flex items-center space-x-1">
                   <Clock className="h-3 w-3" />
-                  <span>{item.readTime} min read</span>
+                  <span>{item.read_time} min read</span>
                 </div>
               )}
-              <span>{formatTimeAgo(item.publishedAt)}</span>
+              <span>{formatTimeAgo(item.published_at)}</span>
             </div>
           </div>
 
