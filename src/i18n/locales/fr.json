@@ -1,0 +1,82 @@
+{
+  "nav": {
+    "feed": "Flux",
+    "trending": "Tendances",
+    "favorites": "Favoris",
+    "settings": "Paramètres"
+  },
+  "content": {
+    "search": "Rechercher du contenu...",
+    "noResults": "Aucun contenu trouvé",
+    "loading": "Chargement...",
+    "loadMore": "Charger plus",
+    "addToFavorites": "Ajouter aux favoris",
+    "removeFromFavorites": "Retirer des favoris",
+    "bookmark": "Marque-page",
+    "share": "Partager"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "logout": "Se déconnecter",
+    "register": "S'inscrire",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "name": "Nom",
+    "welcome": "Bon retour !",
+    "loginSuccess": "Connexion réussie",
+    "logoutSuccess": "Déconnexion réussie",
+    "registerSuccess": "Compte créé avec succès",
+    "invalidCredentials": "Identifiants invalides",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "emailExists": "L'e-mail existe déjà"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "profile": "Profil",
+    "preferences": "Préférences",
+    "language": "Langue",
+    "theme": "Thème",
+    "notifications": "Notifications",
+    "privacy": "Confidentialité",
+    "save": "Enregistrer les modifications",
+    "cancel": "Annuler",
+    "contentTypes": "Types de contenu",
+    "refreshRate": "Fréquence de rafraîchissement",
+    "displayDensity": "Densité d'affichage",
+    "autoRefresh": "Actualisation automatique",
+    "pushNotifications": "Notifications push",
+    "emailNotifications": "Notifications par e-mail"
+  },
+  "categories": {
+    "news": "Actualités",
+    "entertainment": "Divertissement",
+    "social": "Social",
+    "technology": "Technologie",
+    "sports": "Sports",
+    "science": "Science",
+    "health": "Santé",
+    "business": "Affaires"
+  },
+  "time": {
+    "justNow": "À l'instant",
+    "minutesAgo": "il y a {{count}} minutes",
+    "hoursAgo": "il y a {{count}} heures",
+    "daysAgo": "il y a {{count}} jours"
+  },
+  "common": {
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "yes": "Oui",
+    "no": "Non",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "retry": "Réessayer",
+    "error": "Quelque chose s'est mal passé",
+    "success": "Succès"
+  }
+}

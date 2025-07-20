@@ -1,0 +1,82 @@
+{
+  "nav": {
+    "feed": "Feed",
+    "trending": "Trending",
+    "favorites": "Favoriten",
+    "settings": "Einstellungen"
+  },
+  "content": {
+    "search": "Inhalte suchen...",
+    "noResults": "Keine Inhalte gefunden",
+    "loading": "Lädt...",
+    "loadMore": "Mehr laden",
+    "addToFavorites": "Zu Favoriten hinzufügen",
+    "removeFromFavorites": "Aus Favoriten entfernen",
+    "bookmark": "Lesezeichen",
+    "share": "Teilen"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "register": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "name": "Name",
+    "welcome": "Willkommen zurück!",
+    "loginSuccess": "Erfolgreich angemeldet",
+    "logoutSuccess": "Erfolgreich abgemeldet",
+    "registerSuccess": "Konto erfolgreich erstellt",
+    "invalidCredentials": "Ungültige Anmeldedaten",
+    "passwordMismatch": "Passwörter stimmen nicht überein",
+    "emailExists": "E-Mail existiert bereits"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "profile": "Profil",
+    "preferences": "Einstellungen",
+    "language": "Sprache",
+    "theme": "Design",
+    "notifications": "Benachrichtigungen",
+    "privacy": "Datenschutz",
+    "save": "Änderungen speichern",
+    "cancel": "Abbrechen",
+    "contentTypes": "Inhaltstypen",
+    "refreshRate": "Aktualisierungsrate",
+    "displayDensity": "Anzeigedichte",
+    "autoRefresh": "Auto-Aktualisierung",
+    "pushNotifications": "Push-Benachrichtigungen",
+    "emailNotifications": "E-Mail-Benachrichtigungen"
+  },
+  "categories": {
+    "news": "Nachrichten",
+    "entertainment": "Unterhaltung",
+    "social": "Sozial",
+    "technology": "Technologie",
+    "sports": "Sport",
+    "science": "Wissenschaft",
+    "health": "Gesundheit",
+    "business": "Geschäft"
+  },
+  "time": {
+    "justNow": "Gerade eben",
+    "minutesAgo": "vor {{count}} Minuten",
+    "hoursAgo": "vor {{count}} Stunden",
+    "daysAgo": "vor {{count}} Tagen"
+  },
+  "common": {
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "cancel": "Abbrechen",
+    "yes": "Ja",
+    "no": "Nein",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Vorherige",
+    "retry": "Wiederholen",
+    "error": "Etwas ist schief gelaufen",
+    "success": "Erfolg"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "nav": {
+    "feed": "Feed",
+    "trending": "Tendencias",
+    "favorites": "Favoritos",
+    "settings": "Configuración"
+  },
+  "content": {
+    "search": "Buscar contenido...",
+    "noResults": "No se encontró contenido",
+    "loading": "Cargando...",
+    "loadMore": "Cargar más",
+    "addToFavorites": "Añadir a favoritos",
+    "removeFromFavorites": "Quitar de favoritos",
+    "bookmark": "Marcador",
+    "share": "Compartir"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "register": "Registrarse",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "name": "Nombre",
+    "welcome": "¡Bienvenido de vuelta!",
+    "loginSuccess": "Sesión iniciada correctamente",
+    "logoutSuccess": "Sesión cerrada correctamente",
+    "registerSuccess": "Cuenta creada correctamente",
+    "invalidCredentials": "Credenciales inválidas",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "emailExists": "El correo ya existe"
+  },
+  "settings": {
+    "title": "Configuración",
+    "profile": "Perfil",
+    "preferences": "Preferencias",
+    "language": "Idioma",
+    "theme": "Tema",
+    "notifications": "Notificaciones",
+    "privacy": "Privacidad",
+    "save": "Guardar cambios",
+    "cancel": "Cancelar",
+    "contentTypes": "Tipos de contenido",
+    "refreshRate": "Frecuencia de actualización",
+    "displayDensity": "Densidad de visualización",
+    "autoRefresh": "Actualización automática",
+    "pushNotifications": "Notificaciones push",
+    "emailNotifications": "Notificaciones por correo"
+  },
+  "categories": {
+    "news": "Noticias",
+    "entertainment": "Entretenimiento",
+    "social": "Social",
+    "technology": "Tecnología",
+    "sports": "Deportes",
+    "science": "Ciencia",
+    "health": "Salud",
+    "business": "Negocios"
+  },
+  "time": {
+    "justNow": "Ahora mismo",
+    "minutesAgo": "hace {{count}} minutos",
+    "hoursAgo": "hace {{count}} horas",
+    "daysAgo": "hace {{count}} días"
+  },
+  "common": {
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "yes": "Sí",
+    "no": "No",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "retry": "Reintentar",
+    "error": "Algo salió mal",
+    "success": "Éxito"
+  }
+}
