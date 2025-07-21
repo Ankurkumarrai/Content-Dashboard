@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Heart, Bookmark, Share2, MessageCircle, Clock, ExternalLink } from 'lucide-react';
-import { Article } from '@/lib/supabase';
+import { Article, addToFavorites, removeFromFavorites, addToBookmarks, removeFromBookmarks, isArticleFavorited, isArticleBookmarked } from '@/lib/supabase';
+import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
 interface ContentCardProps {
@@ -28,17 +29,66 @@ const categoryColors = {
 
 export const ContentCard: React.FC<ContentCardProps> = ({ item, index, isDragging = false }) => {
   const dispatch = useDispatch();
+  const { toast } = useToast();
+  const [isFavorited, setIsFavorited] = useState(isArticleFavorited(item.id));
+  const [isBookmarked, setIsBookmarked] = useState(isArticleBookmarked(item.id));
 
-  const handleFavoriteToggle = (e: React.MouseEvent) => {
+  const handleFavoriteToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // TODO: Implement Supabase favorite toggle
+    
+    try {
+      if (isFavorited) {
+        await removeFromFavorites('demo-user', item.id);
+        setIsFavorited(false);
+        toast({
+          title: "Removed from favorites",
+          description: "Article removed from your favorites",
+        });
+      } else {
+        await addToFavorites('demo-user', item.id);
+        setIsFavorited(true);
+        toast({
+          title: "Added to favorites",
+          description: "Article added to your favorites",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update favorites",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleBookmarkToggle = (e: React.MouseEvent) => {
+  const handleBookmarkToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // TODO: Implement Supabase bookmark toggle
+    
+    try {
+      if (isBookmarked) {
+        await removeFromBookmarks('demo-user', item.id);
+        setIsBookmarked(false);
+        toast({
+          title: "Removed from bookmarks",
+          description: "Article removed from your bookmarks",
+        });
+      } else {
+        await addToBookmarks('demo-user', item.id);
+        setIsBookmarked(true);
+        toast({
+          title: "Added to bookmarks",
+          description: "Article added to your bookmarks",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update bookmarks",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleCardClick = () => {
@@ -107,23 +157,29 @@ export const ContentCard: React.FC<ContentCardProps> = ({ item, index, isDraggin
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  'h-8 w-8 p-0 transition-colors text-muted-foreground hover:text-red-500'
+                  'h-8 w-8 p-0 transition-colors',
+                  isFavorited 
+                    ? 'text-red-500 hover:text-red-600' 
+                    : 'text-muted-foreground hover:text-red-500'
                 )}
                 onClick={handleFavoriteToggle}
-                aria-label="Add to favorites"
+                aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
               >
-                <Heart className="h-4 w-4" />
+                <Heart className={cn('h-4 w-4', isFavorited && 'fill-current')} />
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  'h-8 w-8 p-0 transition-colors text-muted-foreground hover:text-blue-500'
+                  'h-8 w-8 p-0 transition-colors',
+                  isBookmarked 
+                    ? 'text-blue-500 hover:text-blue-600' 
+                    : 'text-muted-foreground hover:text-blue-500'
                 )}
                 onClick={handleBookmarkToggle}
-                aria-label="Add bookmark"
+                aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
               >
-                <Bookmark className="h-4 w-4" />
+                <Bookmark className={cn('h-4 w-4', isBookmarked && 'fill-current')} />
               </Button>
             </div>
           </div>
