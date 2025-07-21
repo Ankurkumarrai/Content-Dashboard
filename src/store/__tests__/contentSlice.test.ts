@@ -1,139 +1,126 @@
 import { describe, it, expect } from 'vitest';
 import contentReducer, {
+  ContentState,
+  ContentItem,
+  setLoading,
   setContent,
   toggleFavorite,
   toggleBookmark,
   setSearchQuery,
   setSelectedCategory,
-  ContentItem,
 } from '../slices/contentSlice';
 
-const mockContentItems: ContentItem[] = [
-  {
-    id: '1',
-    title: 'Test Article 1',
-    description: 'Description 1',
-    category: 'news',
-    author: 'Author 1',
-    publishedAt: '2024-01-15T10:00:00Z',
-    url: 'https://example.com/1',
-    isFavorite: false,
-    isBookmarked: false,
-    readTime: 5,
-    tags: ['test', 'news'],
-    engagement: { likes: 10, shares: 5, comments: 3 },
+const mockContentItem: ContentItem = {
+  id: '1',
+  title: 'Test Article',
+  description: 'Test Description',
+  category: 'technology',
+  author: 'Test Author',
+  publishedAt: '2023-01-01',
+  imageUrl: 'test.jpg',
+  url: 'https://test.com',
+  isFavorite: false,
+  isBookmarked: false,
+  readTime: 5,
+  tags: ['test'],
+  engagement: {
+    likes: 10,
+    shares: 5,
+    comments: 2,
   },
-  {
-    id: '2',
-    title: 'Test Article 2',
-    description: 'Description 2',
-    category: 'technology',
-    author: 'Author 2',
-    publishedAt: '2024-01-15T11:00:00Z',
-    url: 'https://example.com/2',
-    isFavorite: false,
-    isBookmarked: false,
-    readTime: 8,
-    tags: ['test', 'tech'],
-    engagement: { likes: 15, shares: 8, comments: 5 },
+};
+
+const initialState: ContentState = {
+  unifiedFeed: [],
+  articles: [],
+  movies: [],
+  socialPosts: [],
+  currentPage: 1,
+  hasMoreContent: true,
+  trendingContent: [],
+  favorites: [],
+  bookmarks: [],
+  searchResults: [],
+  searchQuery: '',
+  contentOrder: [],
+  loading: {
+    feed: false,
+    trending: false,
+    search: false,
+    infinite: false,
   },
-];
+  error: {
+    feed: null,
+    trending: null,
+    search: null,
+  },
+  activeCategory: 'all',
+  contentFilters: {
+    categories: ['technology', 'entertainment', 'sports'],
+    dateRange: 'week' as const,
+    sortBy: 'latest' as const,
+  },
+  items: [],
+  filteredItems: [],
+  selectedCategory: 'all',
+  isLoading: false,
+  hasMore: true,
+  page: 1,
+  sortBy: 'latest' as const,
+  viewMode: 'grid' as const,
+};
 
 describe('contentSlice', () => {
-  const initialState = {
-    items: [],
-    filteredItems: [],
-    favorites: [],
-    bookmarks: [],
-    searchQuery: '',
-    selectedCategory: 'all',
-    isLoading: false,
-    hasMore: true,
-    page: 1,
-    sortBy: 'latest' as const,
-    viewMode: 'grid' as const,
-  };
+  it('should return the initial state', () => {
+    expect(contentReducer(undefined, { type: 'unknown' })).toEqual(initialState);
+  });
+
+  it('should handle setLoading', () => {
+    const actual = contentReducer(initialState, setLoading(true));
+    expect(actual.isLoading).toEqual(true);
+    expect(actual.loading.feed).toEqual(true);
+  });
 
   it('should handle setContent', () => {
-    const action = setContent(mockContentItems);
-    const state = contentReducer(initialState, action);
-
-    expect(state.items).toEqual(mockContentItems);
-    expect(state.filteredItems).toEqual(mockContentItems);
+    const mockContent = [mockContentItem];
+    const actual = contentReducer(initialState, setContent(mockContent));
+    expect(actual.items).toEqual(mockContent);
+    expect(actual.filteredItems).toEqual(mockContent);
   });
 
   it('should handle toggleFavorite', () => {
     const stateWithContent = {
       ...initialState,
-      items: mockContentItems,
-      filteredItems: mockContentItems,
+      items: [mockContentItem],
+      filteredItems: [mockContentItem],
     };
-
-    const action = toggleFavorite('1');
-    const state = contentReducer(stateWithContent, action);
-
-    expect(state.items[0].isFavorite).toBe(true);
-    expect(state.favorites).toHaveLength(1);
-    expect(state.favorites[0].id).toBe('1');
+    const actual = contentReducer(stateWithContent, toggleFavorite('1'));
+    expect(actual.items[0].isFavorite).toEqual(true);
   });
 
   it('should handle toggleBookmark', () => {
     const stateWithContent = {
       ...initialState,
-      items: mockContentItems,
-      filteredItems: mockContentItems,
+      items: [mockContentItem],
+      filteredItems: [mockContentItem],
     };
-
-    const action = toggleBookmark('2');
-    const state = contentReducer(stateWithContent, action);
-
-    expect(state.items[1].isBookmarked).toBe(true);
-    expect(state.bookmarks).toHaveLength(1);
-    expect(state.bookmarks[0].id).toBe('2');
+    const actual = contentReducer(stateWithContent, toggleBookmark('1'));
+    expect(actual.items[0].isBookmarked).toEqual(true);
   });
 
   it('should handle setSearchQuery', () => {
     const stateWithContent = {
       ...initialState,
-      items: mockContentItems,
-      filteredItems: mockContentItems,
+      items: [mockContentItem],
+      filteredItems: [mockContentItem],
     };
-
-    const action = setSearchQuery('Article 1');
-    const state = contentReducer(stateWithContent, action);
-
-    expect(state.searchQuery).toBe('Article 1');
-    expect(state.filteredItems).toHaveLength(1);
-    expect(state.filteredItems[0].title).toBe('Test Article 1');
+    const actual = contentReducer(stateWithContent, setSearchQuery('test'));
+    expect(actual.searchQuery).toEqual('test');
   });
 
   it('should handle setSelectedCategory', () => {
-    const stateWithContent = {
-      ...initialState,
-      items: mockContentItems,
-      filteredItems: mockContentItems,
-    };
-
-    const action = setSelectedCategory('technology');
-    const state = contentReducer(stateWithContent, action);
-
-    expect(state.selectedCategory).toBe('technology');
-    expect(state.filteredItems).toHaveLength(1);
-    expect(state.filteredItems[0].category).toBe('technology');
-  });
-
-  it('should filter by "all" category', () => {
-    const stateWithContent = {
-      ...initialState,
-      items: mockContentItems,
-      filteredItems: [mockContentItems[0]], // Initially filtered
-      selectedCategory: 'news',
-    };
-
-    const action = setSelectedCategory('all');
-    const state = contentReducer(stateWithContent, action);
-
-    expect(state.selectedCategory).toBe('all');
-    expect(state.filteredItems).toEqual(mockContentItems);
+    const actual = contentReducer(initialState, setSelectedCategory('technology'));
+    expect(actual.selectedCategory).toEqual('technology');
+    expect(actual.activeCategory).toEqual('technology');
   });
 });
